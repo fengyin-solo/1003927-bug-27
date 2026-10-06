@@ -20,6 +20,11 @@ function readStorage(): Record<string, EntryRow[]> {
   }
   try {
     const parsed = JSON.parse(raw) as Record<string, EntryRow[]>
+    // alarm 已迁到专用数据层（data/alarm）；旧库里若还残留该键，读取时摘除并回写，避免重复迁移
+    if (Object.prototype.hasOwnProperty.call(parsed, 'alarm')) {
+      delete parsed.alarm
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed))
+    }
     return { ...fallback, ...parsed }
   } catch {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(fallback))

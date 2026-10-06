@@ -8,6 +8,8 @@ const Tilt = () => import('@/views/tilt/index.vue')
 const RainGauge = () => import('@/views/rain_gauge/index.vue')
 const Threshold = () => import('@/views/threshold/index.vue')
 const Alarm = () => import('@/views/alarm/index.vue')
+const AlarmDetail = () => import('@/views/alarm/detail.vue')
+const AlarmEdit = () => import('@/views/alarm/edit.vue')
 const Evacuation = () => import('@/views/evacuation/index.vue')
 const Patrol = () => import('@/views/patrol/index.vue')
 const Engineering = () => import('@/views/engineering/index.vue')
@@ -31,6 +33,9 @@ const router = createRouter({
     { path: '/rain_gauge', name: 'rain_gauge', component: RainGauge },
     { path: '/threshold', name: 'threshold', component: Threshold },
     { path: '/alarm', name: 'alarm', component: Alarm },
+    { path: '/alarm/new', name: 'alarm-new', component: AlarmEdit },
+    { path: '/alarm/:id(\\d+)', name: 'alarm-detail', component: AlarmDetail },
+    { path: '/alarm/:id(\\d+)/edit', name: 'alarm-edit', component: AlarmEdit },
     { path: '/evacuation', name: 'evacuation', component: Evacuation },
     { path: '/patrol', name: 'patrol', component: Patrol },
     { path: '/engineering', name: 'engineering', component: Engineering },
