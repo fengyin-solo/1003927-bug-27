@@ -40,12 +40,27 @@ export function listRows(key: string): EntryRow[] {
   return allRows()[key] ?? []
 }
 
-export function saveRows(key: string, rows: EntryRow[]): void {
-  const next = { ...allRows(), [key]: rows }
-  cache = next
+/** 读取领域专属集合（结构比通用 EntryRow 复杂时使用），缺省回落到播种值。 */
+export function loadCollection<T>(key: string, seed: T[]): T[] {
+  const rows = allRows()[key] as unknown as T[] | undefined
+  return rows ?? (clone(seed) as T[])
+}
+
+/**
+ * 整集合原子落库：内存缓存与 localStorage 一次写完，失败抛错不改缓存。
+ * 成功/失败数据不允许只写一半，调用方必须先在内存里拼好完整下一版再写入。
+ */
+export function saveCollection<T>(key: string, rows: T[]): void {
+  const next = { ...allRows(), [key]: rows } as Record<string, EntryRow[]>
   if (typeof window !== 'undefined' && window.localStorage) {
+    // 先写持久层成功后再换内存缓存，避免出现「内存已改、落库失败」的半写状态。
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
   }
+  cache = next
+}
+
+export function saveRows(key: string, rows: EntryRow[]): void {
+  saveCollection(key, rows)
 }
 
 export function resetRows(key: string): EntryRow[] {
